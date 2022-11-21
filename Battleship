@@ -1,0 +1,187 @@
+#!/usr/bin/env python3
+"""Modulo para jugar a Batalla naval"""
+
+
+from random import randrange
+import sys
+import os
+
+D = "D"
+X = "X"
+B = "B"
+O = "O"
+
+enemyBoats = 10
+pjBoats = 10
+
+tableroJugador = [[O, O, O, O, O, O, O, O, O, O],
+                  [O, O, O, O, O, O, O, O, O, O],
+                  [O, O, O, O, O, O, O, O, O, O],
+                  [O, O, O, O, O, O, O, O, O, O],
+                  [O, O, O, O, O, O, O, O, O, O],
+                  [O, O, O, O, O, O, O, O, O, O],
+                  [O, O, O, O, O, O, O, O, O, O],
+                  [O, O, O, O, O, O, O, O, O, O],
+                  [O, O, O, O, O, O, O, O, O, O],
+                  [O, O, O, O, O, O, O, O, O, O]]
+
+tableroPc = [[O, O, O, O, O, O, O, O, O, O],
+             [O, O, O, O, O, O, O, O, O, O],
+             [O, O, O, O, O, O, O, O, O, O],
+             [O, O, O, O, O, O, O, O, O, O],
+             [O, O, O, O, O, O, O, O, O, O],
+             [O, O, O, O, O, O, O, O, O, O],
+             [O, O, O, O, O, O, O, O, O, O],
+             [O, O, O, O, O, O, O, O, O, O],
+             [O, O, O, O, O, O, O, O, O, O],
+             [O, O, O, O, O, O, O, O, O, O]]
+
+def mainmenu():
+    """Funcion que imprime el menu del juego y llama 
+    a las demas funciones para que pueda funcionar"""
+    global enemyBoats
+    global pjBoats
+    while True:
+        print("----- Los wachi wa duro GOD -----")
+        print("----- Batalla Naval -----")
+        print("----- Menú principal -----")
+        print("1. Introducir nombre del jugador.")
+        print("2. Iniciar juego.")
+        print("3. Cerrar programa \n")
+        opcion = int(input("ingrese numero de la opcion: "))
+        if opcion == 1:
+            usuario = input("introducir nombre del jugador: ")
+            print("Hola", usuario ,"\n")
+
+        elif opcion == 2:
+            enemyBoats = 10
+            pjBoats = 10
+            definirPosicionesPc()
+            definirPosicionesJugador()
+            imprimirTableroPc()
+            imprimirTableroJugador()
+
+            while enemyBoats > 0 or pjBoats > 0:
+                pjshot()
+                if enemyBoats < 1:
+                  print("El ganador es PJ")
+                  print()
+                  break
+                imprimirTableroPc()
+                imprimirTableroJugador()
+                pcshot()
+                if pjBoats < 1:
+                  print("El ganador es: PC\n")
+                  break
+                imprimirTableroPc()
+                imprimirTableroJugador()
+            input("Presione Enter para volver al menu principal ")
+
+        elif opcion == 3:
+            sys.exit("Fin del programa")
+        else:
+            print("Error: Seleccion Invalida\n")
+
+def definirPosicionesJugador():
+    """Funcion que recibe los valores que el usuario quiere 
+    ingresar para las coordenadas de cada uno de sus barcos y
+    reemplaza O por B en aquellas coordenadas"""
+    contador = 0
+    while contador < 10:
+        print("Posicion del barco #", contador + 1)
+        numFila = int(input("Digite numero de fila: ")) 
+        while numFila < 1 or numFila > 10:
+            print("Numero de fila incorrecto \n")
+            numFila = int(input("Digite numero de fila: "))
+
+        numCol = int(input("Digite numero de columna: "))
+        while numCol < 1 or numCol > 10:
+            print("Numero de columna incorrecto \n")
+            numCol = int(input("Digite numero de columna: "))
+        print()
+        if tableroJugador[numFila - 1][numCol - 1] != O:
+            print("La posicion ya esta en uso")
+        else:
+            tableroJugador[numFila - 1][numCol - 1] = B
+            contador += 1
+    
+
+def imprimirTableroJugador():
+    """Funcion que imprime el tablero del jugador con los barcos
+    que ubicó"""
+    print("Tablero del jugador\n")
+    for i in range(10):
+        for j in range(10):
+            print(tableroJugador[i][j], end = " ")
+        print()
+    print()
+
+def definirPosicionesPc():
+    """Funcion que ubica aleatoriamente barcos 
+    enemigos en el tablero del PC"""
+    contador = 0
+    while contador < 10:
+        numFila = randrange(10)
+        numCol = randrange(10)
+        if tableroPc[numFila][numCol] == O:
+            tableroPc[numFila][numCol] = B
+            contador += 1
+
+
+def imprimirTableroPc():
+    """Funcion que imprime el tablero del PC"""
+    print("Tablero del PC\n")
+    for i in range(10):
+        for j in range(10):
+            if tableroPc[i][j] == B:
+                print(O, end = " ")
+            else:
+                print(tableroPc[i][j], end = " ")
+        print()
+    print()
+
+def pjshot():
+    """Funcion para que el jugador pueda realizar su tiro"""
+    print("Es tu turno de atacar\n")
+    global enemyBoats
+    shootRow = int(input("Digite la fila que quiere atacar: "))
+    while shootRow < 1 or shootRow > 10:
+        print("Tiro invalidado")
+        shootRow = int(input("Digite la fila que quiere atacar: "))
+
+    shootCol = int(input("Digite la columna que quiere atacar: "))
+    while shootCol < 1 or shootCol > 10:
+        print("Tiro invalidado")
+        shootCol = int(input("Digite la columna que quiere atacar: 1"))
+
+    if tableroPc[shootRow - 1][shootCol - 1] == B:
+        print("\n¡Barco impactado!\n")
+    
+        tableroPc[shootRow - 1][shootCol - 1] = D
+        enemyBoats -= 1 
+        print("Barcos enemigos restantes = ", enemyBoats)
+
+    else:
+        print("\nX Disparo Fallado\n")
+        tableroPc[shootRow - 1][shootCol - 1] = X
+      
+def pcshot():
+    """Funcion que permite al pc realizar un tiro
+    aleatorio al tablero del jugador"""
+    print("Es turno de la maquina")
+    global pjBoats
+    shootRow = randrange(10)
+    shootCol = randrange(10)
+
+    if tableroJugador[shootRow][shootCol] == B:
+        print("\n¡Impacto Enemigo!\n")
+        tableroJugador[shootRow][shootCol] = D
+
+        pjBoats -= 1
+        print("Barcos aliados restantes = ", pjBoats)
+    else:
+        print("\nX Disparo enemigo fallado\n")
+        tableroJugador[shootRow][shootCol] = X
+
+
+mainmenu()
